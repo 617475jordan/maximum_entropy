@@ -8,8 +8,8 @@ void main()
 	Mat image,image0;
 	Mat out;
 	Mat grayImage;
-	image = imread("image//4.png");
-	image0 = imread("image//4.png");
+	image = imread("image//12.png");
+	image0 = imread("image//12.png");
 	if (image.empty()||image0.empty())
 		exit(-1);
 
