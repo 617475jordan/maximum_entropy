@@ -2,77 +2,70 @@
 #include "entropySeg.h"
 #include "rtcprgb2gray.h"
 
+
 void main()
 {
-	Mat image,temp;
+	Mat image,image0;
 	Mat out;
 	Mat grayImage;
-	image = imread("image//9.png");
-	cvtColor(image, grayImage, CV_RGB2GRAY);
-	imshow("grayImage", grayImage);
-	imwrite("image//grayImage.png", grayImage);
+	image = imread("image//4.png");
+	image0 = imread("image//4.png");
+	if (image.empty()||image0.empty())
+		exit(-1);
+
+	/**********对比度保留之彩色图像去色算法*****/
 	rtcprgb2Gray rtcprgb2Gray;
 	out = rtcprgb2Gray.rtcprgb2gray(image);
-	imshow("out", out);
-	imwrite("image//out.png", out);
-	entropySeq entropySeq;
-	image = entropySeq.EntropySeg(out);
-	imshow(" ", image);
-	//Canny(out, out, 50, 200, 3);
-	//GaussianBlur(out, out, Size(3, 3),0.5,0,4);
-	//imshow("out", out);
+	grayImage = out;
+	
+	
+	entropySeq entropySeq;//Function: 最大熵分割算法
+	out = entropySeq.EntropySeg(out);
 
-	/*Mat hsi;
-	cvtColor(temp, hsi, CV_BGR2HSV);
-	//通道分离  
-	vector<Mat> channels;
-	split(hsi, channels);
-	// 提取h通道  
-	Mat gray = out;
-	//imshow("gray", gray);
-	vector<vector<Point> > regContours;
-	vector<Vec4i> hierarchy;
-	MSER mser1;
-	//Mat gray;
-	mser1(gray, regContours, Mat());
-	gray = Mat::zeros(image.size(), CV_8UC1);
-	for (int i = (int)regContours.size() - 1; i >= 0; i--)
+	Mat element = getStructuringElement(MORPH_RECT, Size(5, 5), Point(-1, -1));
+	erode(out, out, element);//进行腐蚀
+
+	Mat temp0=image;
+	Mat temp1=image0;
+
+	/****************前景与背景进行分割************************/
+	for (int i = 0; i < out.rows; i++)
 	{
-		// 根据检测区域点生成mser结果  
-		const vector<Point>& r = regContours[i];
-		for (int j = 0; j < (int)r.size(); j++)
+		for (int j = 0; j < out.cols; j++)
 		{
-			Point pt = r[j];
-			gray.at<unsigned char>(pt) = 255;
+			if (out.at<uchar>(i, j)>0)
+			{
+				temp1.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+			}
+			if (out.at<uchar>(i, j)<= 0)
+			{
+				temp0.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+			}
 		}
 	}
-	// mser结果输出  
-	//imwrite("resource/mserGray/demo1.jpg",gray);
-	imshow("mserGray", gray);
-	Mat bj_image;
-	bj_image = gray.clone();
-	Mat filt;
-	//filt = gray.clone();
-	findContours(gray, regContours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE, Point());
-	//Mat dst = Mat::zeros(gray.size(), CV_8UC1); //最小外接矩形画布  
-	vector< vector<Point> > filterContours; // 筛选后的轮廓 
-	filterContours.clear();
-	for (int i = 0; i<regContours.size(); i++)
+	imshow("background0", temp0);
+	imshow("background1", temp1);
+	/****************    **图像合并************************/
+	Mat show=temp1;
+	int cPointR0, cPointG0, cPointB0, cPoint0;//currentPoint;
+	int x = 0;
+	for (int i = 0; i < out.rows; i++)
 	{
-		//绘制轮廓  
-		drawContours(bj_image, regContours, i, Scalar(255), 1, 8, hierarchy);
-		//绘制轮廓的外接矩形  
-		/*double area = 0;
-		area = fabs(contourArea(Mat(regContours[i], true), true));
-		Rect rect = boundingRect(regContours[i]);
-		rectangle(bj_image, rect, cvScalar(255, 0, 0), 1);
-		//if ((rect.height / (double)rect.width >0.1) && (rect.height / (double)rect.width <10))
-		if (rect.height*rect.width>25 && (rect.height / (double)rect.width>0.2&&rect.height / (double)rect.width<5) && (rect.height>5 && rect.height<300) &&
-			(rect.width>5 && rect.width<300) && area / (rect.height*rect.width)>0.1)
-			filterContours.push_back(regContours[i]);
+		for (int j = 0; j < out.cols; j++)
+		{
+			cPointB0 = temp1.at<Vec3b>(i, j)[0];
+			cPointG0 = temp1.at<Vec3b>(i, j)[1];
+			cPointR0 = temp1.at<Vec3b>(i, j)[2];
+			if (cPointB0 == 0 & cPointR0 == 0 & cPointG0 == 0)
+			{
+				temp1.at<Vec3b>(i, j) = temp0.at<Vec3b>(i, j);
+			}
 
+		}
 	}
-	imshow("bjRect", bj_image);*/
+	imshow("show", temp1);
+	//cout << "whitecount: " << whitecount << endl;
+	//cout << "blackcount: " << blackcount << endl;
+	waitKey(0);
 
-	cv::waitKey(0);
 }
