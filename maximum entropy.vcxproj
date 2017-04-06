@@ -79,11 +79,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="entropySeg.cpp" />
+    <ClCompile Include="RegionGrowing.cpp" />
     <ClCompile Include="rtcprgb2gray.cpp" />
     <ClCompile Include="testMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entropySeg.h" />
+    <ClInclude Include="RegionGrowing.h" />
     <ClInclude Include="rtcprgb2gray.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,12 +24,18 @@
     <ClCompile Include="rtcprgb2gray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RegionGrowing.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entropySeg.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="rtcprgb2gray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RegionGrowing.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
